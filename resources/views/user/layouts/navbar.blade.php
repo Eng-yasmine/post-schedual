@@ -13,11 +13,15 @@
                     <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ route('welcome') }}">Home</a>
                 </li>
                 @auth
+
                     <li class="nav-item">
                         <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ route('posts.create') }}">Posts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ route('posts.create') }}">PlatForms</a>
+                        <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ route('platforms.create') }}">PlatForms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
 
                     <li class="nav-item dropdown">

@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Apis\platforms;
 
-use App\Http\Controllers\Apis\Traits\ApiResponseTrait;
-use App\Http\Requests\StorePlatform_PostRequest;
 use App\Models\Platform;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePlatformRequest;
 use App\Http\Requests\UpdatePlatformRequest;
+use App\Http\Requests\StorePlatform_PostRequest;
+use App\Http\Controllers\Apis\Traits\ApiResponseTrait;
 
-class PlatformController extends Controller
+class ApiPlatformController extends Controller
 {
     use ApiResponseTrait;
     /**
@@ -17,17 +18,15 @@ class PlatformController extends Controller
     public function index()
     {
         $platforms = Platform::withCount('users')->paginate(10);
-        return view('user.pages.platforms.index', compact('platforms'));
+        return $platforms
+            ? $this->successResponse(['data' => $platforms], 'platforms retrived successfully', 200)
+            : $this->errorResponse('cant retrived platforms', 400, ['errors' => 'something ocured whiled retreving platforms']);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $platforms = Platform::latest()->get();
-        return view('user.pages.platforms.create', compact('platforms'));
-    }
+
 
 
 
@@ -39,7 +38,9 @@ class PlatformController extends Controller
     {
         $data = $request->validated();
         $platform = Platform::create($data);
-        return redirect()->back()->with('success', 'Platform added successfully.');
+        return $platform
+            ? $this->successResponse(['data' => $platform], 'Platform added successfully.', 201)
+            : $this->errorResponse('platform cant retrived', 400, ['errors' => 'something ocured while adding platform']);
     }
     public function toggle(StorePlatform_PostRequest $request)
     {
@@ -84,6 +85,9 @@ class PlatformController extends Controller
      */
     public function destroy(Platform $platform)
     {
-        //
+        $platform->delete();
+        return $platform
+            ? $this->successResponse(['data' => $platform], 'patform deleted successfully', 200)
+            : $this->errorResponse('platform cant deleted', 400, ['errors' => 'something ocured while deleting platform']);
     }
 }

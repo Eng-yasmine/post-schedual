@@ -17,12 +17,11 @@ class platformpostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // عرض جميع المنصات مع حالة التفعيل لكل منصة للمستخدم الحالي
+
     public function index()
     {
         $user = auth()->user();
 
-        // جلب كل المنصات مع حالة تفعيلها للمستخدم (true/false)
         $platforms = Platform::all()->map(function($platform) use ($user) {
             return [
                 'id' => $platform->id,
@@ -35,7 +34,6 @@ class platformpostController extends Controller
         return $$this->successResponse(['platforms' => $platforms],200);
     }
 
-    // تبديل حالة تفعيل/إلغاء تفعيل منصة للمستخدم (Toggle)
     public function toggle(StorePlatformRequest $request)
     {
         $user = auth()->user();

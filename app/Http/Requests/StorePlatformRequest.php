@@ -11,7 +11,7 @@ class StorePlatformRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StorePlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            
+            'name' => 'required|string|max:255|unique:platforms,name',
+            'type' => 'required|in:twitter,linkedin,instagram',
         ];
     }
 }

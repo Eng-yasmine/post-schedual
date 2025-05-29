@@ -18,10 +18,10 @@ class Post extends Model implements HasMedia
         'image',
         'status',
         'user_id',
-        'scheduled_time'
+        'schedualed_time'
     ];
     protected $casts = [
-        'scheduled_time' => 'datetime',
+        'schedualed_time' => 'datetime',
     ];
 
     public function user()

@@ -1,55 +1,81 @@
-@extends('user.layouts.app')
-@section('title', 'Create Post')
-@section('header_title', 'Post of Users ')
+@extends('Admin.layouts.app')
 
 
-
-@section('user_content')
+@section('content')
 
     <div class="container my-5">
-        @include('inc.message')
-        <h2 class="mb-4 text-center">My Posts</h2>
+        <h2 class="mb-4 text-center">All Users Posts (Table View)</h2>
 
         @if($posts->count())
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                @foreach($posts as $post)
-                    <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            @if($post->hasMediaUrl('posts'))
-                                <img src="{{ $post->getFirstMediaUrl('posts') }}" class="card-img-top" alt="Post Image">
-                            @endif
-
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $post->title }}</h5>
-                                <p class="card-text">{{ Str::limit($post->content, 200) }}</p>
-                                <p><strong>Status:</strong> {{ ucfirst($post->status) }}</p>
-                                @if($post->scheduled_time)
-                                    <p><strong>Scheduled for:</strong> {{ $post->scheduled_time->format('d M Y - H:i') }}</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Scheduled Time</th>
+                        <th>Platforms</th>
+                        <th>Image</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($posts as $post)
+                        <tr>
+                            <td>{{ $post->title }}</td>
+                            <td>{{ ucfirst($post->status) }}</td>
+                            <td>
+                                @if ($post->schedualed_time)
+                                    {{ $post->schedualed_time->format('d M Y - H:i') }}
+                                @else
+                                    <span class="text-muted">no date found</span>
                                 @endif
+                            </td>
+                            <td>
+                                @forelse ($post->platforms as $platform)
+                                    <span class="badge bg-secondary">
+                                        {{ $platform->name }}
+                                        @if ($platform->pivot && $platform->pivot->platform_status)
+                                            ({{ $platform->pivot->platform_status }})
+                                        @endif
+                                    </span>
+                                @empty
+                                    <span class="text-muted">No platforms</span>
+                                @endforelse
+                            </td>
+                            <td>
+                                @if ($post->hasMedia('posts'))
+                                    <img src="{{ $post->getFirstMediaUrl('posts') }}" alt="Post Image" width="60">
+                                @else
+                                    <span class="text-muted">No image</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($post->created_at)
+                                    {{ $post->created_at->format('d M Y - H:i') }}
+                                @else
+                                    <span class="text-muted">no date</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('posts.show', $post) }}" class="btn btn-sm btn-info">View</a>
 
-                                <p>
-                                    <strong>Platforms:</strong>
-                                    @foreach($post->platforms as $platform)
-                                        <span class="badge bg-info text-dark">{{ $platform->type }}</span>
-                                    @endforeach
-                                </p>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center">No posts found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
 
-                                <a href="{{ route('posts.show', $post->id) }}" class="btn btn-outline-primary btn-sm mt-2">View
-                                    Details</a>
-                            </div>
-
-                            <div class="card-footer text-muted text-end">
-                                Created at: {{ $post->created_at->format('d M Y - H:i') }}
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+            {{-- ✅ Pagination --}}
+            <div>
+                {{ $posts->links() }}
             </div>
         @else
-            <div class="alert alert-info text-center">
-                You haven't created any posts yet.
-            </div>
+            <p class="text-center text-muted">You don’t have any posts yet.</p>
         @endif
     </div>
-
 @endsection

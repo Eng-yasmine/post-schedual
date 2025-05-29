@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         //
     })
+    ->withCommands([
+        \App\Console\Commands\RunScheduledPosts::class,
+        ])
+
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

@@ -29,22 +29,12 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Choose Platform </label>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="twitter" id="platformTwitter"
-                        name="platforms[]" />
-                    <label class="form-check-label" for="platformTwitter">twitter</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="instagram" id="platformInstagram"
-                        name="platforms[]" />
-                    <label class="form-check-label" for="platformInstagram">instagram</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="linkedin" id="platformLinkedin"
-                        name="platforms[]" />
-                    <label class="form-check-label" for="platformLinkedin">linkedin</label>
-                </div>
+                <label for="platforms" class="form-label">Choose Platforms</label>
+                <select name="platforms[]" id="platforms" class="form-control" multiple>
+                    @foreach($platforms as $platform)
+                        <option value="{{ $platform->id }}">{{ $platform->name }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
@@ -52,13 +42,13 @@
                     <option value="">Choose Status</option>
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
-                    <option value="scheduled">Scheduled</option>
+                    <option value="schedualed">Schedualed</option>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label for="scheduled_time" class="form-label">Scedual Time</label>
-                <input type="datetime-local" class="form-control" id="scheduled_time" name="scheduled_time" />
+                <label for="schedualed_time" class="form-label">Schedualed Time</label>
+                <input type="datetime-local" class="form-control" name="schedualed_time" id="schedualed_time">
             </div>
 
 
@@ -68,22 +58,4 @@
 
 
 
-@endsection
-@section('scripts')
-    <script>
-        // عداد الحروف لمحتوى البوست
-        const contentInput = document.getElementById('content');
-        const charCount = document.getElementById('charCount');
-        const maxChars = 280; // مثلا حد تويتر
-
-        contentInput.addEventListener('input', () => {
-            const currentLength = contentInput.value.length;
-            charCount.textContent = `${currentLength} / ${maxChars} حرف`;
-            if (currentLength > maxChars) {
-                charCount.classList.add('text-danger');
-            } else {
-                charCount.classList.remove('text-danger');
-            }
-        });
-    </script>
 @endsection

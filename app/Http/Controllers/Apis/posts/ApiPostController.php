@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Apis\Posts;
+
 
 use Carbon\Carbon;
 use App\Models\Post;
 use App\Models\Platform;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Http\Controllers\Apis\Traits\ApiResponseTrait;
 
-class PostController extends Controller
+class ApiPostController extends Controller
 {
+    use ApiResponseTrait;
 
     /**
      * Display a listing of the resource.
@@ -32,19 +36,17 @@ class PostController extends Controller
 
         $posts = $query->latest()->paginate(10);
 
-        return view('welcome', compact('posts'));
+        return $posts
+            ? $this->successResponse($posts, ['message' => 'All posts retrived successfully'], 200)
+            : $this->errorResponse(400, ['errors' => 'somthing error ocured']);
+
     }
 
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $platforms = Platform::all();
 
-        return view('user.pages.posts.create', compact('platforms'));
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -66,9 +68,7 @@ class PostController extends Controller
         $maxScheduledPostsPerDay = 10;
 
         if ($scheduledCount >= $maxScheduledPostsPerDay) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['schedualed_time' => 'You have reached the maximum number of scheduled posts for today']);
+            return $this->errorResponse(['schedualed_time' => 'You have reached the maximum number of scheduled posts for today'], 400);
         }
 
         $data = $request->validated();
@@ -82,8 +82,9 @@ class PostController extends Controller
         if ($request->hasFile('image')) {
             $post->addMediaFromRequest('image')->toMediaCollection('posts');
         }
-
-        return redirect()->route('welcome')->with('success', 'Post created successfully');
+        return $post
+            ? $this->successResponse(['data' => $post], 'post created successfully', 201)
+            : $this->errorResponse('post doesnt created', 400, ['errors' => 'You have reached the maximum number of scheduled posts for today']);
     }
 
 
@@ -93,7 +94,9 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $post = $post->load(['platforms', 'media']);
-        return view('user.pages.posts.show', compact('post'));
+        return $post
+            ? $this->successResponse(['data' => $post], 'post created successfully', 201)
+            : $this->errorResponse('post doesnt created', 400, ['errors' => 'You have reached the maximum number of scheduled posts for today']);
     }
 
 
@@ -103,7 +106,6 @@ class PostController extends Controller
     public function edit(Post $post)
     {
 
-        return view('user.pages.posts.edit', $post->id);
     }
 
     /**
@@ -140,8 +142,10 @@ class PostController extends Controller
         }
 
         $post->update($data);
+        return $post
+            ? $this->successResponse(['data' => $post], 'post updated successfully', 201)
+            : $this->errorResponse('post doesnt update', 400, ['errors' => 'You have reached the maximum number of scheduled posts for today']);
 
-        return redirect()->route('welcome')->with('success', 'Post updated successfully');
     }
 
 
@@ -152,8 +156,10 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
+        return $post
+            ? $this->successResponse(['data' => $post], 'post deleted successfully', 200)
+            : $this->errorResponse('post doesnt delete', 400, ['errors' => 'somthing ocured while delete post ! please try again']);
 
-        return redirect()->route('posts.index')->with('success', 'Post deleted successfully');
     }
 
 }

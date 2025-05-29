@@ -2,18 +2,37 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 
 class PagesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.pages.index');
+        $userID = auth()->id();
+
+        $query = Post::with(['platforms', 'media'])
+            ->where('user_id', $userID)
+            ->whereNotNull('schedualed_time') // هنا الاسم كما هو في قاعدة البيانات
+            ->where('schedualed_time', '>', Carbon::now());
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('date')) {
+            $query->whereDate('schedualed_time', $request->date);
+        }
+
+        $posts = $query->latest()->paginate(10);
+        return view('welcome', compact('posts'));
     }
+
 
     /**
      * Show the form for creating a new resource.

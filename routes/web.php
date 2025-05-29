@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\PlatformController;
-use App\Http\Controllers\platformpostController;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PlatformController;
+use App\Http\Controllers\admin\PagesController;
+use App\Http\Controllers\platformpostController;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+Route::get('/', [PagesController::class, 'index'])->name('welcome');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('posts', PostController::class);
@@ -27,5 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
+
+// Route::get('/test-log', function () {
+//     Log::info("✅ Test log from Yasmine - Checking log works!");
+//     return 'Logged!';
+// });
+
+
+require __DIR__ . '/auth.php';
+require __DIR__ . '/admin.php';
